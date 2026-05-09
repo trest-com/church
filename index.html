@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form | Simple Two-Step</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f0f2f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    /* simple card */
+    .form-card {
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .form-header {
+      background: #2c3e50;
+      color: white;
+      padding: 1.5rem 1.8rem;
+    }
+
+    .form-header h2 {
+      font-weight: 600;
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .form-header p {
+      opacity: 0.8;
+      font-size: 0.85rem;
+    }
+
+    .step-info {
+      background: #ecf0f1;
+      padding: 0.6rem 1.8rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #2c3e50;
+      border-bottom: 1px solid #ddd;
+    }
+
+    form {
+      padding: 1.8rem;
+    }
+
+    .form-page {
+      display: none;
+    }
+
+    .form-page.active {
+      display: block;
+    }
+
+    .input-field {
+      margin-bottom: 1.3rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+      color: #2c3e50;
+    }
+
+    .required {
+      color: #e74c3c;
+      margin-left: 3px;
+    }
+
+    input, select {
+      padding: 10px 14px;
+      border: 1px solid #bdc3c7;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 5px;
+    }
+
+    .radio-group label {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .radio-group input {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1.8rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #ecf0f1;
+      color: #2c3e50;
+      transition: 0.2s;
+    }
+
+    button.next-btn, button.submit-btn {
+      background: #2c3e50;
+      color: white;
+    }
+
+    button.next-btn:hover, button.submit-btn:hover {
+      background: #1a2632;
+    }
+
+    button.back-btn:hover {
+      background: #d5dbdb;
+    }
+
+    .required-note {
+      font-size: 0.7rem;
+      color: #7f8c8d;
+      margin-top: 1.5rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid #ecf0f1;
+      text-align: center;
+    }
+
+    .static-badge {
+      background: #f9f9f9;
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #7f8c8d;
+      border-top: 1px solid #ecf0f1;
+    }
+
+    hr {
+      margin: 0.5rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-card">
+  <div class="form-header">
+    <h2>Registration Form</h2>
+    <p>Please fill your details</p>
+  </div>
+  <div class="step-info" id="stepIndicator">Step 1 of 2: Personal Info</div>
+
+  <form action="#" method="POST" id="multiStepForm">
+    <!-- PAGE 1: FULL NAME, SURNAME, GENDER, AGE, POSITION -->
+    <div id="page1" class="form-page active">
+      <div class="input-field">
+        <label>Full Name <span class="required">*</span></label>
+        <input type="text" name="fullname" placeholder="Enter your full name" required>
+      </div>
+
+      <div class="input-field">
+        <label>Surname <span class="required">*</span></label>
+        <input type="text" name="surname" placeholder="Your surname / last name" required>
+      </div>
+
+      <div class="input-field">
+        <label>Gender <span class="required">*</span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="gender" value="Male"> Male</label>
+          <label><input type="radio" name="gender" value="Female"> Female</label>
+          <label><input type="radio" name="gender" value="Other"> Other</label>
+        </div>
+      </div>
+
+      <div class="input-field">
+        <label>Age <span class="required">*</span></label>
+        <input type="number" name="age" placeholder="Your age" min="1" max="120" required>
+      </div>
+
+      <div class="input-field">
+        <label>Position <span class="required">*</span></label>
+        <input type="text" name="position" placeholder="e.g., Student, Officer, Manager" required>
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="back-btn" disabled style="opacity:0.5; cursor:default;">Back</button>
+        <button type="button" class="next-btn" id="gotoPage2">Next →</button>
+      </div>
+    </div>
+
+    <!-- PAGE 2: VILLAGE, HOMECELL, PHONE NUMBER + SUBMIT BUTTON -->
+    <div id="page2" class="form-page">
+      <div class="input-field">
+        <label>Village <span class="required">*</span></label>
+        <input type="text" name="village" placeholder="Enter your village name" required>
+      </div>
+
+      <div class="input-field">
+        <label>Homecell <span class="required">*</span></label>
+        <input type="text" name="homecell" placeholder="Homecell / small community" required>
+      </div>
+
+      <div class="input-field">
+        <label>Phone Number <span class="required">*</span></label>
+        <input type="tel" name="phone" placeholder="e.g., 0999 123 456" required>
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="back-btn" id="gotoPage1">← Back</button>
+        <button type="submit" class="submit-btn">Submit Registration</button>
+      </div>
+    </div>
+
+    <div class="required-note">
+      ⚠️ All fields marked with <span class="required">*</span> are required
+    </div>
+    <div class="static-badge">
+      This is a static form — data will be sent to the server (no advanced JavaScript)
+    </div>
+  </form>
+</div>
+
+<!-- SIMPLE JAVASCRIPT: only for page toggling and basic required check (no heavy logic) -->
+<script>
+  // Get elements
+  const page1 = document.getElementById('page1');
+  const page2 = document.getElementById('page2');
+  const nextBtn = document.getElementById('gotoPage2');
+  const backBtn = document.getElementById('gotoPage1');
+  const stepIndicator = document.getElementById('stepIndicator');
+  const form = document.getElementById('multiStepForm');
+
+  // Function to show page 1 or 2
+  function showPage(pageNumber) {
+    if (pageNumber === 1) {
+      page1.classList.add('active');
+      page2.classList.remove('active');
+      stepIndicator.innerText = 'Step 1 of 2: Personal Info';
+    } else {
+      page1.classList.remove('active');
+      page2.classList.add('active');
+      stepIndicator.innerText = 'Step 2 of 2: Location & Contact';
+    }
+  }
+
+  // Simple validation for page 1 before going to page 2
+  function validatePage1() {
+    const fullname = page1.querySelector('input[name="fullname"]').value.trim();
+    const surname = page1.querySelector('input[name="surname"]').value.trim();
+    const age = page1.querySelector('input[name="age"]').value.trim();
+    const position = page1.querySelector('input[name="position"]').value.trim();
+    const genderRadios = page1.querySelectorAll('input[name="gender"]');
+    let genderSelected = false;
+    for (let radio of genderRadios) {
+      if (radio.checked) {
+        genderSelected = true;
+        break;
+      }
+    }
+
+    let errorMsg = '';
+    if (fullname === '') errorMsg = 'Please enter your full name.\n';
+    if (surname === '') errorMsg += 'Please enter your surname.\n';
+    if (!genderSelected) errorMsg += 'Please select your gender.\n';
+    if (age === '' || isNaN(age) || age < 1 || age > 120) errorMsg += 'Please enter a valid age (1-120).\n';
+    if (position === '') errorMsg += 'Please enter your position.\n';
+
+    if (errorMsg !== '') {
+      alert(errorMsg);
+      return false;
+    }
+    return true;
+  }
+
+  // Validate page 2 before submitting
+  function validatePage2() {
+    const village = page2.querySelector('input[name="village"]').value.trim();
+    const homecell = page2.querySelector('input[name="homecell"]').value.trim();
+    const phone = page2.querySelector('input[name="phone"]').value.trim();
+
+    let errorMsg = '';
+    if (village === '') errorMsg += 'Please enter your village.\n';
+    if (homecell === '') errorMsg += 'Please enter your homecell.\n';
+    if (phone === '') errorMsg += 'Please enter your phone number.\n';
+
+    if (errorMsg !== '') {
+      alert(errorMsg);
+      return false;
+    }
+    return true;
+  }
+
+  // Next button click: from page 1 to page 2 if valid
+  nextBtn.addEventListener('click', function(e) {
+    if (validatePage1()) {
+      showPage(2);
+    }
+  });
+
+  // Back button: from page 2 to page 1
+  backBtn.addEventListener('click', function(e) {
+    showPage(1);
+  });
+
+  // On form submit: validate page 2 fields and then optionally show confirm
+  form.addEventListener('submit', function(event) {
+    // If currently on page 1, we shouldn't allow submit (user must go to page 2)
+    if (page1.classList.contains('active')) {
+      event.preventDefault();
+      alert('Please click "Next" to complete step 1, then submit from step 2.');
+      return false;
+    }
+
+    // If we're on page 2, validate page2 fields
+    if (!validatePage2()) {
+      event.preventDefault();
+      return false;
+    }
+
+    // Optional confirm
+    const confirmSubmit = confirm('All details look good. Submit registration now?');
+    if (!confirmSubmit) {
+      event.preventDefault();
+      return false;
+    }
+    // If confirmed, form will submit normally (POST)
+    return true;
+  });
+
+  // Also prevent accidental enter key on page 1 from submitting the whole form prematurely
+  // But we just rely on our submit handler.
+  // Small tweak: if someone presses enter inside page1 inputs, the form tries to submit.
+  // We'll catch that and redirect to next page instead
+  const page1Inputs = page1.querySelectorAll('input');
+  page1Inputs.forEach(input => {
+    input.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (validatePage1()) {
+          showPage(2);
+        }
+      }
+    });
+  });
+
+  // Page 2 enter key on last field could submit but works fine with our validation
+</script>
+</body>
+</html>
