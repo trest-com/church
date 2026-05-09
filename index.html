@@ -181,41 +181,41 @@
 
 <div class="form-card">
   <div class="form-header">
-    <h2>Registration Form</h2>
+    <h2>Shalom Membership Form</h2>
     <p>Please fill your details</p>
   </div>
   <div class="step-info" id="stepIndicator">Step 1 of 2: Personal Info</div>
 
-  <form action="#" method="POST" id="multiStepForm">
+  <form action="https://sheetdb.io/api/v1/metnrfskv9853" method="POST" id="multiStepForm">
     <!-- PAGE 1: FULL NAME, SURNAME, GENDER, AGE, POSITION -->
     <div id="page1" class="form-page active">
       <div class="input-field">
-        <label>Full Name <span class="required">*</span></label>
-        <input type="text" name="fullname" placeholder="Enter your full name" required>
+        <label>First Name <span class="required">*</span></label>
+        <input type="text" name="data[FIRSTNAME]" placeholder="Enter your full name" required>
       </div>
 
       <div class="input-field">
         <label>Surname <span class="required">*</span></label>
-        <input type="text" name="surname" placeholder="Your surname / last name" required>
+        <input type="text" name="data[SURNAME]" placeholder="Enter Your surname / last name" required>
       </div>
 
       <div class="input-field">
         <label>Gender <span class="required">*</span></label>
         <div class="radio-group">
-          <label><input type="radio" name="gender" value="Male"> Male</label>
-          <label><input type="radio" name="gender" value="Female"> Female</label>
-          <label><input type="radio" name="gender" value="Other"> Other</label>
+          <label><input type="radio" name="data[GENDER]" value="Male"> Male</label>
+          <label><input type="radio" name="data[GENDER]" value="Female"> Female</label>
+          <label><input type="radio" name="data[GENDER]" value="Other"> Other</label>
         </div>
       </div>
 
       <div class="input-field">
         <label>Age <span class="required">*</span></label>
-        <input type="number" name="age" placeholder="Your age" min="1" max="120" required>
+        <input type="number" name="data[AGE]" placeholder="Your age" min="1" max="120" required>
       </div>
 
       <div class="input-field">
         <label>Position <span class="required">*</span></label>
-        <input type="text" name="position" placeholder="e.g., Student, Officer, Manager" required>
+        <input type="text" name="data[POSITION]" placeholder="e.g., Chairperson, Secretary, Treasurer, Member ...." required>
       </div>
 
       <div class="button-group">
@@ -228,17 +228,23 @@
     <div id="page2" class="form-page">
       <div class="input-field">
         <label>Village <span class="required">*</span></label>
-        <input type="text" name="village" placeholder="Enter your village name" required>
+        <input type="text" name="data[VILLAGE]" placeholder="Enter your village name" required>
       </div>
 
       <div class="input-field">
         <label>Homecell <span class="required">*</span></label>
-        <input type="text" name="homecell" placeholder="Homecell / small community" required>
+        <select id="gender" name="data[HOMECELL]">
+            <option value="" disabled selected>— Select homecell —</option>
+            <option value="Headquarters">Headquarters</option>
+            <option value="Mtuwangoma">Mtuwangoma</option>
+            <option value="Umodzi (Mtiya & Chitipi)">Umodzi (Mtiya & Chitipi)</option>
+            <option value="Msumwa">Msumwa</option>
+        </select>
       </div>
 
       <div class="input-field">
         <label>Phone Number <span class="required">*</span></label>
-        <input type="tel" name="phone" placeholder="e.g., 0999 123 456" required>
+        <input type="tel" name="data[PHONE NUMBER]" placeholder="e.g., 0999 123 456" required>
       </div>
 
       <div class="button-group">
@@ -251,7 +257,7 @@
       ⚠️ All fields marked with <span class="required">*</span> are required
     </div>
     <div class="static-badge">
-      This is a static form — data will be sent to the server (no advanced JavaScript)
+      Only members that declared Shalom Christian Gathering as their church are allowed to register
     </div>
   </form>
 </div>
@@ -279,13 +285,14 @@
     }
   }
 
+  
   // Simple validation for page 1 before going to page 2
   function validatePage1() {
-    const fullname = page1.querySelector('input[name="fullname"]').value.trim();
-    const surname = page1.querySelector('input[name="surname"]').value.trim();
-    const age = page1.querySelector('input[name="age"]').value.trim();
-    const position = page1.querySelector('input[name="position"]').value.trim();
-    const genderRadios = page1.querySelectorAll('input[name="gender"]');
+    const fullname = page1.querySelector('input[name="data[FIRSTNAME]"]').value.trim();
+    const surname = page1.querySelector('input[name="data[SURNAME]"]').value.trim();
+    const age = page1.querySelector('input[name="data[AGE]"]').value.trim();
+    const position = page1.querySelector('input[name="data[POSITION]"]').value.trim();
+    const genderRadios = page1.querySelectorAll('input[name="data[GENDER]"]');
     let genderSelected = false;
     for (let radio of genderRadios) {
       if (radio.checked) {
@@ -310,9 +317,9 @@
 
   // Validate page 2 before submitting
   function validatePage2() {
-    const village = page2.querySelector('input[name="village"]').value.trim();
-    const homecell = page2.querySelector('input[name="homecell"]').value.trim();
-    const phone = page2.querySelector('input[name="phone"]').value.trim();
+    const village = page2.querySelector('input[name="data[VILLAGE]"]').value.trim();
+    const homecell = page2.querySelector('input[name="data[HOMECELL]"]').value.trim();
+    const phone = page2.querySelector('input[name="data[PHONE NUMBER]"]').value.trim();
 
     let errorMsg = '';
     if (village === '') errorMsg += 'Please enter your village.\n';
