@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shalom Registration</title>
+  <title>Shalom Registration </title>
+<link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+
   <style>
     * {
       margin: 0;
@@ -28,7 +30,6 @@
       border-radius: 24px;
       box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15);
       overflow: hidden;
-      transition: transform 0.2s ease;
     }
 
     .form-header {
@@ -41,7 +42,7 @@
       flex-wrap: wrap;
     }
 
-    @media (max-width: 480px) {
+     @media (max-width: 480px) {
       .form-header {
         flex-direction: column;
         text-align: center;
@@ -89,16 +90,16 @@
 }
 
 .header-text h2 {
-  font-size: 1.5rem;
-  margin: 0;
-  letter-spacing: -0.3px;
-}
+      font-size: 1.5rem;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
 
-.header-text p {
-  margin: 0.2rem 0 0 0;
-  font-size: 0.8rem;
-  opacity: 0.85;
-}
+    .header-text p {
+      margin: 0.2rem 0 0 0;
+      font-size: 0.8rem;
+      opacity: 0.85;
+    }
 
     .step-info {
       background: #eef2f5;
@@ -107,7 +108,6 @@
       font-weight: 600;
       color: #0f2b3d;
       border-bottom: 1px solid #dce4e8;
-      letter-spacing: 0.3px;
     }
 
     form {
@@ -228,15 +228,37 @@
     }
 
     .static-badge {
-      background: #f9f9f9;
-      padding: 0.5rem;
+      background: #f8fafc;
+      padding: 0.7rem;
       text-align: center;
       font-size: 0.7rem;
-      color: #7f8c8d;
-      border-top: 1px solid #ecf0f1;
+      color: #2c6e8f;
+      border-top: 1px solid #e2edf2;
+      font-weight: 500;
     }
 
-    /* custom success modal overlay */
+    .loader-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .success-overlay {
       position: fixed;
       top: 0;
@@ -314,44 +336,23 @@
       border-radius: 40px;
       font-weight: 600;
     }
-
-    .loader-spinner {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 0.6s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
-    }
   </style>
 </head>
 <body>
 
 <div class="form-card">
+
   <div class="form-header">
     <img src="logo.png" alt="Shalom Church Logo" class="logo">
   <div class="header-text">
     <h2>Shalom Membership Form</h2>
     <p>Please fill your details</p>
   </div
+
   <div class="step-info" id="stepIndicator">Step 1 of 2: Personal Info</div>
 
-  <!-- form action points to SheetDB, but we intercept with fetch to avoid pretty print -->
-  <form id="multiStepForm">
-    <!-- PAGE 1: FIRSTNAME, SURNAME, GENDER, AGE, POSITION -->
+  <form id="multiStepForm" novalidate>
+    <!-- PAGE 1 -->
     <div id="page1" class="form-page active">
       <div class="input-field">
         <label>First Name <span class="required">*</span></label>
@@ -388,7 +389,7 @@
       </div>
     </div>
 
-    <!-- PAGE 2: VILLAGE, HOMECELL, PHONE NUMBER -->
+    <!-- PAGE 2 -->
     <div id="page2" class="form-page">
       <div class="input-field">
         <label>Village <span class="required">*</span></label>
@@ -421,17 +422,17 @@
       ⚠️ All fields marked with <span class="required">*</span> are required
     </div>
     <div class="static-badge">
-      Only members that declared Shalom Christian Gathering as their church are allowed to register
+      ✝️ Only members that declared Shalom Christian Gathering as their church are allowed to register
     </div>
   </form>
 </div>
 
-<!-- custom success modal (no pretty print) -->
+<!-- Success Modal -->
 <div id="successModal" class="success-overlay">
   <div class="success-card">
     <div class="success-icon">✓</div>
-    <h3>Welcome!</h3>
-    <p>Your registration has been submitted successfully. God bless you!</p>
+    <h3>Registration Received!</h3>
+    <p>Your membership has been recorded successfully. God bless you.</p>
     <button id="closeSuccessBtn">Done</button>
   </div>
 </div>
@@ -448,7 +449,6 @@
   const successModal = document.getElementById('successModal');
   const closeSuccessBtn = document.getElementById('closeSuccessBtn');
 
-  // Helper: show page
   function showPage(pageNumber) {
     if (pageNumber === 1) {
       page1.classList.add('active');
@@ -461,7 +461,6 @@
     }
   }
 
-  // Validate page1 (personal info)
   function validatePage1() {
     const firstname = page1.querySelector('input[name="data[FIRSTNAME]"]').value.trim();
     const surname = page1.querySelector('input[name="data[SURNAME]"]').value.trim();
@@ -470,66 +469,43 @@
     const genderRadios = page1.querySelectorAll('input[name="data[GENDER]"]');
     let genderSelected = false;
     for (let radio of genderRadios) {
-      if (radio.checked) {
-        genderSelected = true;
-        break;
-      }
+      if (radio.checked) { genderSelected = true; break; }
     }
-
     let errorMsg = '';
     if (firstname === '') errorMsg += '• First name is required.\n';
     if (surname === '') errorMsg += '• Surname is required.\n';
     if (!genderSelected) errorMsg += '• Please select your gender.\n';
     if (age === '' || isNaN(age) || age < 1 || age > 120) errorMsg += '• Valid age (1-120) is required.\n';
     if (position === '') errorMsg += '• Position / Role is required.\n';
-    
-    if (errorMsg) {
-      alert(`Please fix the following:\n${errorMsg}`);
-      return false;
-    }
+    if (errorMsg) { alert(`Please fix the following:\n${errorMsg}`); return false; }
     return true;
   }
 
-  // Validate page2 fields (before submit via fetch)
   function validatePage2() {
     const village = page2.querySelector('input[name="data[VILLAGE]"]').value.trim();
     const homecell = page2.querySelector('select[name="data[HOMECELL]"]').value;
     const phone = page2.querySelector('input[name="data[PHONE NUMBER]"]').value.trim();
-
     let errorMsg = '';
     if (village === '') errorMsg += '• Village name is required.\n';
     if (!homecell || homecell === '') errorMsg += '• Please select a homecell.\n';
     if (phone === '') errorMsg += '• Phone number is required.\n';
-    
-    if (errorMsg) {
-      alert(`Missing information:\n${errorMsg}`);
-      return false;
-    }
+    if (errorMsg) { alert(`Missing information:\n${errorMsg}`); return false; }
     return true;
   }
 
-  // Gather complete form data as object ready for SheetDB POST
   function collectFormData() {
-    // Page1 fields
     const firstname = page1.querySelector('input[name="data[FIRSTNAME]"]').value.trim();
     const surname = page1.querySelector('input[name="data[SURNAME]"]').value.trim();
     let gender = '';
     const genderRadios = page1.querySelectorAll('input[name="data[GENDER]"]');
     for (let radio of genderRadios) {
-      if (radio.checked) {
-        gender = radio.value;
-        break;
-      }
+      if (radio.checked) { gender = radio.value; break; }
     }
     const age = page1.querySelector('input[name="data[AGE]"]').value.trim();
     const position = page1.querySelector('input[name="data[POSITION]"]').value.trim();
-
-    // Page2 fields
     const village = page2.querySelector('input[name="data[VILLAGE]"]').value.trim();
     const homecell = page2.querySelector('select[name="data[HOMECELL]"]').value;
     const phone = page2.querySelector('input[name="data[PHONE NUMBER]"]').value.trim();
-
-    // Build data object matching API column names: FIRSTNAME, SURNAME, GENDER, AGE, POSITION, VILLAGE, HOMECELL, PHONE NUMBER
     return {
       data: {
         FIRSTNAME: firstname,
@@ -544,42 +520,54 @@
     };
   }
 
-  // Show loading state on submit button
-  function setLoadingState(isLoading) {
+  function setLoadingState(isLoading, customText = null) {
     if (isLoading) {
       submitButton.disabled = true;
-      submitButton.innerHTML = '<span class="loader-spinner"></span> Submitting...';
+      submitButton.innerHTML = '<span class="loader-spinner"></span> ' + (customText || 'Submitting...');
     } else {
       submitButton.disabled = false;
       submitButton.innerHTML = 'Submit Registration';
     }
   }
 
-  // Show success modal instead of SheetDB raw JSON
   function showSuccessModal() {
     successModal.classList.add('active');
-    // Reset form after successful registration (optional but good UX)
     form.reset();
-    // Reset gender radios manually because reset() may not uncheck radios consistently across browsers
     const allRadios = document.querySelectorAll('input[name="data[GENDER]"]');
     allRadios.forEach(radio => radio.checked = false);
-    // Reset select to placeholder
     const homecellSelect = page2.querySelector('select[name="data[HOMECELL]"]');
     if(homecellSelect) homecellSelect.selectedIndex = 0;
-    // Go back to page 1 after successful submit
     showPage(1);
   }
 
-  // HIDE modal and clean
   function hideModal() {
     successModal.classList.remove('active');
   }
 
-  // Submit via fetch to SheetDB API — prevents page redirect & pretty-print response
+  // ========== DUPLICATE PREVENTION BASED ON PERSON DATA (NOT PHONE NUMBER) ==========
+  // Check if the same person (first name + surname + age) already exists.
+  // Phone numbers may be shared, so we ignore phone number for duplicate detection.
+  async function isPersonDataDuplicate(firstname, surname, age) {
+    try {
+      // Search by exact match on FIRSTNAME, SURNAME, and AGE
+      const searchUrl = `https://sheetdb.io/api/v1/metnrfskv9853/search?FIRSTNAME=${encodeURIComponent(firstname)}&SURNAME=${encodeURIComponent(surname)}&AGE=${encodeURIComponent(age)}`;
+      const response = await fetch(searchUrl, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
+      if (!response.ok) return false;
+      const result = await response.json();
+      // If any record exists with the same name and age, it's a duplicate person
+      return Array.isArray(result) && result.length > 0;
+    } catch (err) {
+      console.warn("Duplicate check failed:", err);
+      return false; // On error, allow submission (fail open)
+    }
+  }
+
+  // Main submit with duplicate prevention (ignoring phone number)
   async function submitToSheetDB(formDataObj) {
-    // API endpoint provided
     const SHEETDB_URL = "https://sheetdb.io/api/v1/metnrfskv9853";
-    
     try {
       const response = await fetch(SHEETDB_URL, {
         method: 'POST',
@@ -589,135 +577,101 @@
         },
         body: JSON.stringify(formDataObj)
       });
-
-      // Even if response is not ok, we handle but show success to user because data might be saved
-      // but we want to avoid showing any raw JSON. However we can check for success status.
-      let responseData;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        responseData = await response.json();
-      } else {
-        responseData = await response.text();
-      }
-
-      // SheetDB returns 201 or 200 for success; we treat any 2xx as successful insert
       if (response.ok) {
-        // Registration successful, show custom message without exposing the API response
         showSuccessModal();
       } else {
-        // If error from API, still show user-friendly message (but we log error quietly)
-        console.warn("SheetDB responded with error", responseData);
-        alert("Something went wrong. Please check your internet or try again later. If issue persists, contact support.");
+        let errorDetail = "";
+        try {
+          const errData = await response.json();
+          errorDetail = errData.message || JSON.stringify(errData);
+        } catch(e) { errorDetail = response.statusText; }
+        console.warn("SheetDB error:", errorDetail);
+        alert("Submission failed. Please try again later. If problem persists, contact church admin.");
       }
     } catch (error) {
-      console.error("Network or fetch error:", error);
-      alert("Network error: Couldn't submit registration. Please verify your connection.");
+      console.error("Network error:", error);
+      alert("Network error: Could not submit registration. Check your internet connection.");
     } finally {
       setLoadingState(false);
     }
   }
 
-  // Handle form submission (prevent default, intercept with fetch)
   async function handleFormSubmit(event) {
     event.preventDefault();
     
-    // Ensure we are on page 2 before submitting
     if (page1.classList.contains('active')) {
       alert('Please complete step 1 and click "Next" before submitting.');
       return;
     }
+    if (!validatePage2()) return;
     
-    // Validate page2 fields
-    if (!validatePage2()) {
-      return;
-    }
+    // Get person identifiers (no phone number used for duplicate check)
+    const firstname = page1.querySelector('input[name="data[FIRSTNAME]"]').value.trim();
+    const surname = page1.querySelector('input[name="data[SURNAME]"]').value.trim();
+    const age = page1.querySelector('input[name="data[AGE]"]').value.trim();
     
-    // Optional confirm dialogue
-    const isConfirmed = confirm('Review your details. Submit registration to Shalom Church?');
-    if (!isConfirmed) return;
+    setLoadingState(true, "Checking existing records...");
     
-    // Set loading and disable button
-    setLoadingState(true);
-    
-    // Collect all data in required format
-    const payload = collectFormData();
-    
-    // Additional check: ensure gender is selected because reset could cause uncheck? but validate page2 doesn't check gender. However needed for data integrity.
-    // We can quickly double-check gender from page1 in case user manipulated?
-    let genderChecked = false;
-    const genderRadiosCheck = page1.querySelectorAll('input[name="data[GENDER]"]');
-    for (let radio of genderRadiosCheck) {
-      if (radio.checked) genderChecked = true;
-    }
-    if (!genderChecked) {
-      alert("Gender selection is required. Please go back to step 1 and select gender.");
+    // Check if this person (same name + age) already registered
+    const duplicatePerson = await isPersonDataDuplicate(firstname, surname, age);
+    if (duplicatePerson) {
+      alert(`❌ A member named "${firstname} ${surname}" with age ${age} is already registered.\n\nDuplicate registrations for the same person are not allowed.\nIf this is a mistake, please contact the church.`);
       setLoadingState(false);
       return;
     }
     
-    // Send data to SheetDB via fetch (no redirect, no pretty print displayed)
+    // Final confirmation
+    const isConfirmed = confirm(`Confirm registration for ${firstname} ${surname}, age ${age}?`);
+    if (!isConfirmed) {
+      setLoadingState(false);
+      return;
+    }
+    
+    // Ensure gender is selected
+    let genderChecked = false;
+    const genderRadiosCheck = page1.querySelectorAll('input[name="data[GENDER]"]');
+    for (let radio of genderRadiosCheck) {
+      if (radio.checked) { genderChecked = true; break; }
+    }
+    if (!genderChecked) {
+      alert("Gender selection missing. Please go back to step 1 and select gender.");
+      setLoadingState(false);
+      return;
+    }
+    
+    setLoadingState(true, "Submitting...");
+    const payload = collectFormData();
     await submitToSheetDB(payload);
   }
 
-  // Next button: from page 1 to page 2 with validation
-  nextBtn.addEventListener('click', function() {
-    if (validatePage1()) {
-      showPage(2);
-    }
-  });
-
-  // Back button: page2 to page1
-  backBtn.addEventListener('click', function() {
-    showPage(1);
-  });
-
-  // Attach submit event listener
+  // Event listeners
+  nextBtn.addEventListener('click', () => { if (validatePage1()) showPage(2); });
+  backBtn.addEventListener('click', () => showPage(1));
   form.addEventListener('submit', handleFormSubmit);
+  closeSuccessBtn.addEventListener('click', hideModal);
+  successModal.addEventListener('click', (e) => { if (e.target === successModal) hideModal(); });
 
-  // Close success modal and optionally reset additional flags
-  closeSuccessBtn.addEventListener('click', () => {
-    hideModal();
-    // Optional: clear any leftover loader state
-  });
-
-  // Clicking on overlay background also closes modal
-  successModal.addEventListener('click', function(e) {
-    if (e.target === successModal) {
-      hideModal();
-    }
-  });
-
-  // Extra UX: pressing Enter on page1 triggers next (already implemented)
+  // Enter key on page1 -> next
   const page1Inputs = page1.querySelectorAll('input');
   page1Inputs.forEach(input => {
-    input.addEventListener('keypress', function(e) {
+    input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        if (validatePage1()) {
-          showPage(2);
-        }
+        if (validatePage1()) showPage(2);
       }
     });
   });
 
-  // Prevent accidental submit on page2 enter if any input causes default (but our handler takes over)
+  // Enter key on page2 triggers submit with duplicate prevention
   const page2Inputs = page2.querySelectorAll('input, select');
   page2Inputs.forEach(field => {
-    field.addEventListener('keypress', function(e) {
+    field.addEventListener('keypress', (e) => {
       if (e.key === 'Enter' && field.tagName !== 'SELECT') {
-        // For inputs, trigger submit via form handler - but avoid double call
         e.preventDefault();
-        // Trigger form submit programmatically
-        const fakeEvent = new Event('submit', { cancelable: true, bubbles: true });
-        form.dispatchEvent(fakeEvent);
+        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
       }
     });
   });
-
-  // Small patch: Ensure radio group does not break if someone resets, but fine.
-  // Additionally, set "required" attribute for select and inputs for HTML5 but we have JS validation.
-  // Remove ugly browser validation bubble.
-  form.setAttribute('novalidate', true);
 </script>
 </body>
 </html>
